@@ -74,6 +74,7 @@
 
 (global-set-key(kbd "M-å") 'copy-whole-line)
 (global-unset-key (kbd "C-z"))
+(global-set-key (kbd "C-c p") 'transpose-lines)
 ;;===========================================================
 ;; ***PAKETTIEN LATAUSJÄRJESTELMÄT***
 ;;-----------------------------------------------------------
@@ -216,7 +217,12 @@
 (add-hook 'java-mode-hook 'lsp)
 ;;-----------------------------------------------------------
 ;; ***Rust***
-;;
+;;(straight-use-package 'rust-mode)
+;;(use-package rust-mode
+;;:hook (rust-mode . lsp))
+;;(lsp-rust-analyzer-inlay-hints-mode 1)
+
+(straight-use-package 'rustic)
 ;;-----------------------------------------------------------
 ;; ***Python***
 ;;
