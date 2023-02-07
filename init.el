@@ -171,7 +171,34 @@
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
   :init (setq lsp-keymap-prefix "C-c l")
-  :config (lsp-enable-which-key-integration t))
+  :custom
+  ;; what to use when checking on-save. "check" is default, I prefer clippy
+  (lsp-rust-analyzer-cargo-watch-command "clippy")
+  (lsp-eldoc-render-all t)
+  (lsp-idle-delay 0.6)
+  ;; This controls the overlays that display type and other hints inline. Enable
+  ;; / disable as you prefer. Well require a `lsp-workspace-restart' to have an
+  ;; effect on open projects.
+  (lsp-rust-analyzer-server-display-inlay-hints t)
+  (lsp-rust-analyzer-display-lifetime-elision-hints-enable "skip_trivial")
+  (lsp-rust-analyzer-display-chaining-hints t)
+  (lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names t)
+  (lsp-rust-analyzer-display-closure-return-type-hints t)
+  (lsp-rust-analyzer-display-parameter-hints t)
+  (lsp-rust-analyzer-display-reborrow-hints t)
+  :config
+  (lsp-enable-which-key-integration t)
+  )
+
+;; ***LSP-UI***
+(straight-use-package 'lsp-ui)
+(use-package lsp-ui
+  :ensure
+  :commands lsp-ui-mode
+  :custom
+  (lsp-ui-peek-always-show t)
+  (lsp-ui-sideline-show-hover t)
+  (lsp-ui-doc-enable nil))
 
 ;; ***Tekstin täydennys***
 (straight-use-package 'company)
@@ -194,7 +221,14 @@
 (straight-use-package 'lsp-treemacs)
 (global-set-key (kbd "C-c t") 'treemacs)
 
+(straight-use-package 'flycheck)
 
+(straight-use-package 'yasnippet)
+(use-package yasnippet
+  :config
+  (yas-reload-all)
+  (add-hook 'prog-mode-hook 'yas-minor-mode)
+  (add-hook 'text-mode-hook 'yas-minor-mode))
 ;;===========================================================
 ;; ***Ohjelmointikielet***
 ;;-----------------------------------------------------------
@@ -217,12 +251,14 @@
 (add-hook 'java-mode-hook 'lsp)
 ;;-----------------------------------------------------------
 ;; ***Rust***
-;;(straight-use-package 'rust-mode)
-;;(use-package rust-mode
-;;:hook (rust-mode . lsp))
-;;(lsp-rust-analyzer-inlay-hints-mode 1)
-
 (straight-use-package 'rustic)
+;;(add-hook 'rustic-mode-hook (lambda () (flymake-mode -1)))
+(add-hook 'rustic-mode-hook 'lsp-deferred)
+(add-hook 'rustic-mode-hook 'lsp-rust-analyzer-inlay-hints-mode)
+(add-hook 'rustic-mode-hook 'lsp-ui-mode)
+(add-hook 'rustic-mode-hook 'yas-minor-mode-on)
+
+;;(setq rustic-lsp-setup-p nil)
 ;;-----------------------------------------------------------
 ;; ***Python***
 ;;
