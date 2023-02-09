@@ -161,7 +161,7 @@
   :init (which-key-mode)
   :diminish which-key-mode
   :config
-  (setq which-key-idle-delay 5))
+  (setq which-key-idle-delay 6))
 
 ;;===========================================================
 ;; ***LSP ja company***
@@ -175,7 +175,7 @@
   ;; what to use when checking on-save. "check" is default, I prefer clippy
   (lsp-rust-analyzer-cargo-watch-command "clippy")
   (lsp-eldoc-render-all t)
-  (lsp-idle-delay 0.6)
+  (lsp-idle-delay 0.3)
   ;; This controls the overlays that display type and other hints inline. Enable
   ;; / disable as you prefer. Well require a `lsp-workspace-restart' to have an
   ;; effect on open projects.
@@ -190,6 +190,10 @@
   (lsp-enable-which-key-integration t)
   )
 
+;; ***ELDOC***
+(setq eldoc-echo-area-use-multiline-p nil) ; Set to t maybe on pc?
+(setq max-mini-window-height 4)
+
 ;; ***LSP-UI***
 (straight-use-package 'lsp-ui)
 (use-package lsp-ui
@@ -197,8 +201,8 @@
   :commands lsp-ui-mode
   :custom
   (lsp-ui-peek-always-show t)
-  (lsp-ui-sideline-show-hover t)
-  (lsp-ui-doc-enable nil))
+  (lsp-ui-sideline-show-hover nil)
+  (lsp-ui-doc-enable t))
 
 ;; ***Tekstin täydennys***
 (straight-use-package 'company)
