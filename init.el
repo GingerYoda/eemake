@@ -201,7 +201,7 @@
   :commands lsp-ui-mode
   :custom
   (lsp-ui-peek-always-show t)
-  (lsp-ui-sideline-show-hover nil)
+  (lsp-ui-sideline-show-hover t)
   (lsp-ui-doc-enable t))
 
 ;; ***Tekstin täydennys***
@@ -252,7 +252,18 @@
 ;;-----------------------------------------------------------
 ;; ***Java***
 (straight-use-package 'lsp-java)
-(add-hook 'java-mode-hook 'lsp)
+(use-package lsp-java
+  :hook
+  (java-mode . lsp-deferred)
+  (java-mode . lsp-ui-mode)
+  (java-mode . yas-minor-mode-on)
+  :custom
+  (lsp-ui-sideline-enable nil)
+  ;(lsp-ui-sideline-show-code-actions nil)
+  ;(lsp-ui-sideline-show-hover t)
+  (lsp-ui-doc-show-with-cursor t)
+  )
+
 ;;-----------------------------------------------------------
 ;; ***Rust***
 (straight-use-package 'rustic)
