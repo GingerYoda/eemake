@@ -1,3 +1,4 @@
+;; tämä pitäisi kopioida .emacs.dn
 ;;===========================================================
 ;; *** NÄYTÖN ASETUKSET***
 ;;-----------------------------------------------------------
@@ -59,6 +60,7 @@
 ;; ***PIKANÄPPÄIMET***
 ;;-----------------------------------------------------------
 
+(global-set-key (kbd "C-c TAB") 'window-swap-states)
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 (global-set-key (kbd "M-n") 'forward-paragraph)
 (global-set-key (kbd "M-p") 'backward-paragraph)
@@ -74,7 +76,8 @@
 
 (global-set-key(kbd "M-å") 'copy-whole-line)
 (global-unset-key (kbd "C-z"))
-(global-set-key (kbd "C-c p") 'transpose-lines)
+(global-set-key (kbd "C-c ö") 'windmove-left)
+(global-set-key (kbd "C-c ä") 'windmove-right)
 ;;===========================================================
 ;; ***PAKETTIEN LATAUSJÄRJESTELMÄT***
 ;;-----------------------------------------------------------
@@ -192,7 +195,7 @@
 
 ;; ***ELDOC***
 (setq eldoc-echo-area-use-multiline-p nil) ; Set to t maybe on pc?
-(setq max-mini-window-height 4)
+(setq max-mini-window-height 8)
 
 ;; ***LSP-UI***
 (straight-use-package 'lsp-ui)
@@ -201,10 +204,10 @@
   :commands lsp-ui-mode
   :custom
   (lsp-ui-peek-always-show t)
-  (lsp-ui-sideline-show-hover t)
+  (lsp-ui-sideline-show-hover nil)
   (lsp-ui-doc-enable t))
 
-;; ***Tekstin täydennys***
+;; ***Tekstin täydennys company***
 (straight-use-package 'company)
 (use-package company
   :after lsp-mode
@@ -224,15 +227,19 @@
 (straight-use-package 'treemacs)
 (straight-use-package 'lsp-treemacs)
 (global-set-key (kbd "C-c t") 'treemacs)
+(global-set-key (kbd "C-c SPC") 'treemacs-select-window)
 
+;;***FLYCHECK***
 (straight-use-package 'flycheck)
 
+;;***YASNIPPET****
 (straight-use-package 'yasnippet)
 (use-package yasnippet
   :config
   (yas-reload-all)
   (add-hook 'prog-mode-hook 'yas-minor-mode)
   (add-hook 'text-mode-hook 'yas-minor-mode))
+
 ;;===========================================================
 ;; ***Ohjelmointikielet***
 ;;-----------------------------------------------------------
@@ -252,18 +259,9 @@
 ;;-----------------------------------------------------------
 ;; ***Java***
 (straight-use-package 'lsp-java)
-(use-package lsp-java
-  :hook
-  (java-mode . lsp-deferred)
-  (java-mode . lsp-ui-mode)
-  (java-mode . yas-minor-mode-on)
-  :custom
-  (lsp-ui-sideline-enable nil)
-  ;(lsp-ui-sideline-show-code-actions nil)
-  ;(lsp-ui-sideline-show-hover t)
-  (lsp-ui-doc-show-with-cursor t)
-  )
-
+(use-package lsp-java)
+(add-hook 'java-mode-hook 'lsp-deferred)
+  
 ;;-----------------------------------------------------------
 ;; ***Rust***
 (straight-use-package 'rustic)
