@@ -1,4 +1,3 @@
-;; tämä pitäisi kopioida .emacs.dn
 ;;===========================================================
 ;; *** NÄYTÖN ASETUKSET***
 ;;-----------------------------------------------------------
@@ -78,6 +77,10 @@
 (global-unset-key (kbd "C-z"))
 (global-set-key (kbd "C-c ö") 'windmove-left)
 (global-set-key (kbd "C-c ä") 'windmove-right)
+(global-set-key (kbd "C-c p") 'transpose-lines)
+(global-set-key (kbd "C-f") 'find-file)
+(global-unset-key (kbd "C-x C-c"))
+
 ;;===========================================================
 ;; ***PAKETTIEN LATAUSJÄRJESTELMÄT***
 ;;-----------------------------------------------------------
@@ -166,6 +169,32 @@
   :config
   (setq which-key-idle-delay 6))
 
+;;-----------------------------------------------------------
+;; ***ORG-mode***
+
+(straight-use-package 'org)
+(defun oskarin-iso-org-hook ()
+  (org-indent-mode) ; kauniimpi sisennys hierarkiatasojen mukaan.
+  (variable-pitch-mode 0) ; Muuttaa fontin hassuksi - ehkä vähän luettavammaksi.
+  (auto-fill-mode 0)
+  (visual-line-mode 1)
+  )
+(use-package org
+  :hook (org-mode . oskarin-iso-org-hook)
+  :config
+  (setq org-ellipsis " ▾" ; Vaihtaa kolmepistettä perästä nuoleksi.
+		org-hide-emphasis-markers t)) ; Poistaa lihavoidun, kursivoidun ja linkkitekstin merkinnät.
+
+(defun oskarin-org-keskitys ()
+  (setq visual-fill-column-width 100
+        visual-fill-column-center-text t)
+  (visual-fill-column-mode 1))
+
+(straight-use-package 'visual-fill-column)
+(use-package visual-fill-column
+  :hook (org-mode . oskarin-org-keskitys))
+
+
 ;;===========================================================
 ;; ***LSP ja company***
 ;;-----------------------------------------------------------
@@ -178,7 +207,7 @@
   ;; what to use when checking on-save. "check" is default, I prefer clippy
   (lsp-rust-analyzer-cargo-watch-command "clippy")
   (lsp-eldoc-render-all t)
-  (lsp-idle-delay 0.3)
+  (lsp-idle-delay 5.0)
   ;; This controls the overlays that display type and other hints inline. Enable
   ;; / disable as you prefer. Well require a `lsp-workspace-restart' to have an
   ;; effect on open projects.
@@ -265,13 +294,11 @@
 ;;-----------------------------------------------------------
 ;; ***Rust***
 (straight-use-package 'rustic)
-;;(add-hook 'rustic-mode-hook (lambda () (flymake-mode -1)))
 (add-hook 'rustic-mode-hook 'lsp-deferred)
 (add-hook 'rustic-mode-hook 'lsp-rust-analyzer-inlay-hints-mode)
 (add-hook 'rustic-mode-hook 'lsp-ui-mode)
 (add-hook 'rustic-mode-hook 'yas-minor-mode-on)
 
-;;(setq rustic-lsp-setup-p nil)
 ;;-----------------------------------------------------------
 ;; ***Python***
 ;;
