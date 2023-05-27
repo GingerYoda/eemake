@@ -77,6 +77,8 @@
 (global-unset-key (kbd "C-z"))
 (global-set-key (kbd "C-c ö") 'windmove-left)
 (global-set-key (kbd "C-c ä") 'windmove-right)
+(global-set-key (kbd "C-c j") 'windmove-down)
+(global-set-key (kbd "C-c k") 'windmove-up)
 (global-set-key (kbd "C-c p") 'transpose-lines)
 (global-set-key (kbd "C-f") 'find-file)
 (global-unset-key (kbd "C-x C-c"))
