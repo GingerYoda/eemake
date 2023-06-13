@@ -9,7 +9,8 @@
 (setq inhibit-splash-screen t)
 
 ;; Fontin asettaminen.
-(set-face-attribute 'default nil :font "Liberation Mono-14")
+(set-face-attribute 'default nil :font "Liberation Mono-15")
+
 
 ;; Asettaa sisennyksen.
 (setq-default tab-width 4)
@@ -51,9 +52,14 @@
 ;; Kalenteria varten asetetaan viikko alkamaan maanantaista.
 (setq calendar-week-start-day 1)
 
-
 ;;Näyttää rivinumerot rivillä.
 (global-display-line-numbers-mode 1)
+
+;; Ei rivitä rivejä vaan jatkaa ne ikkunan "ulkopuolelle"
+(setq-default truncate-lines 1)
+
+;; Parantaa näkyvyyttä
+(setq-default global-visual-line-mode 1)
 
 ;;===========================================================
 ;; ***PIKANÄPPÄIMET***
@@ -74,13 +80,19 @@
 	  (kmacro-lambda-form [?\C-a ?\C-  ?\C-e ?\M-w] 0 "%d"))
 
 (global-set-key(kbd "M-å") 'copy-whole-line)
-(global-unset-key (kbd "C-z"))
-(global-set-key (kbd "C-c ö") 'windmove-left)
-(global-set-key (kbd "C-c ä") 'windmove-right)
+(global-set-key (kbd "C-c h") 'windmove-left)
+(global-set-key (kbd "C-c l") 'windmove-right)
 (global-set-key (kbd "C-c j") 'windmove-down)
 (global-set-key (kbd "C-c k") 'windmove-up)
 (global-set-key (kbd "C-c p") 'transpose-lines)
 (global-set-key (kbd "C-f") 'find-file)
+(global-set-key (kbd "C-u") 'undo)
+(global-set-key (kbd "C-c e k") 'save-buffers-kill-emacs)
+
+(global-set-key (kbd "C-c ö") "{")
+(global-set-key (kbd "C-c ä") "[")
+
+(global-unset-key (kbd "C-z"))
 (global-unset-key (kbd "C-x C-c"))
 
 ;;===========================================================
@@ -99,10 +111,15 @@
       (goto-char (point-max))
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
-
+(setq package-enable-at-startup nil)
 ;;===========================================================
 ;; *** PAKETIT ***
 ;;-----------------------------------------------------------
+;; ***prettier*** //NOTE(): ei toimi.
+;; (straight-use-package 'prettier)
+;; (add-hook 'typescript-mode-hook 'prettier-mode)
+;; (setq prettier-mode-sync-config-flag nil)
+;; (setenv "NODE_PATH" "/usr/local/lib/node_
 ;; ***use-package***
 ;; Use-package helpottaa pakettien asetusten määrittämistä.
 (straight-use-package 'use-package)
@@ -113,6 +130,18 @@
 ;; ***rainbow delimeters***
 (straight-use-package 'rainbow-delimiters)
 (add-hook 'prog-mode-hook 'rainbow-delimiters-mode-enable)
+
+;;-----------------------------------------------------------
+;; ***HL-TODO***
+;; Korostaa tekstistä TODO:t yms. tagit.
+
+(straight-use-package 'hl-todo)
+(use-package hl-todo
+  :hook (prog-mode . hl-todo-mode))
+(setq hl-todo-keyword-faces
+      '(("TODO" . "#FF0000")
+        ("NOTE" . "#F5EC42")
+        ("FIXME" . "#FFA703")))
 
 ;;-----------------------------------------------------------
 ;; ***Kuvakkeet doomia, treemacsia ja dirediä varten.
@@ -145,6 +174,7 @@
          :map ivy-minibuffer-map
          ("TAB" . ivy-alt-done)	
          ("C-l" . ivy-alt-done)
+         ("C-j" . ivy-immediate-done)
          :map ivy-switch-buffer-map
          ("C-l" . ivy-done)
          ("C-d" . ivy-switch-buffer-kill)
@@ -196,6 +226,9 @@
 (use-package visual-fill-column
   :hook (org-mode . oskarin-org-keskitys))
 
+;; Magit
+(straight-use-package 'magit)
+(use-package magit)
 
 ;;===========================================================
 ;; ***LSP ja company***
@@ -210,6 +243,7 @@
   (lsp-rust-analyzer-cargo-watch-command "clippy")
   (lsp-eldoc-render-all t)
   (lsp-idle-delay 5.0)
+
   ;; This controls the overlays that display type and other hints inline. Enable
   ;; / disable as you prefer. Well require a `lsp-workspace-restart' to have an
   ;; effect on open projects.
@@ -224,14 +258,18 @@
   (lsp-enable-which-key-integration t)
   )
 
+;; Lisätään tehoja, että lsp jaksaa pyörittää isoja projekteja.
+;; Lisää kaistaa => pitäisi kasvattaa nopeuttaa.
+(setq read-process-output-max (* 1024 1024))
+(setq gc-cons-threshold 100000000)
+
 ;; ***ELDOC***
-(setq eldoc-echo-area-use-multiline-p nil) ; Set to t maybe on pc?
+(setq eldoc-echo-area-use-multiline-p t) ; Set to t maybe on pc?
 (setq max-mini-window-height 8)
 
 ;; ***LSP-UI***
 (straight-use-package 'lsp-ui)
 (use-package lsp-ui
-  :ensure
   :commands lsp-ui-mode
   :custom
   (lsp-ui-peek-always-show t)
@@ -262,6 +300,10 @@
 
 ;;***FLYCHECK***
 (straight-use-package 'flycheck)
+(use-package flycheck
+  :config
+  (add-hook 'typescript-mode-hook 'flycheck-mode)
+  (add-hook 'kotlin-mode-hook 'flycheck-mode))
 
 ;;***YASNIPPET****
 (straight-use-package 'yasnippet)
@@ -270,6 +312,10 @@
   (yas-reload-all)
   (add-hook 'prog-mode-hook 'yas-minor-mode)
   (add-hook 'text-mode-hook 'yas-minor-mode))
+
+;;-----------------------------------------------------------
+;; ***Command-log***
+(straight-use-package 'command-log-mode)
 
 ;;===========================================================
 ;; ***Ohjelmointikielet***
@@ -305,4 +351,66 @@
 ;; ***Python***
 ;;
 ;;-----------------------------------------------------------
+;; **Kotlin**
+(straight-use-package 'kotlin-mode)
+;;(add-hook 'kotlin-mode-hook 'lsp-deferred)
+;; Optimization
+(setq lsp-kotlin-debug-adapter-enabled nil)
+(setenv "JAVA_OPTS" "-Xmx8g") ;; Lisää muistia
+(straight-use-package 'flycheck-kotlin)
 
+(eval-after-load 'flycheck
+  '(progn
+    (require 'flycheck-kotlin)
+    (flycheck-kotlin-setup)))
+
+;;-----------------------------------------------------------
+;; **Typescript** https://gist.github.com/jadestrong/a42251d74f210be7f43744d5cca6bd1e
+(straight-use-package 'web-mode)
+(use-package web-mode
+  :mode (("\\.html?\\'" . web-mode)
+         ("\\.tsx\\'" . web-mode)
+         ("\\.jsx\\'" . web-mode))
+  :config
+  (setq web-mode-markup-indent-offset 2
+        web-mode-css-indent-offset 2
+        web-mode-code-indent-offset 2
+        web-mode-block-padding 2
+        web-mode-comment-style 2
+		
+        web-mode-enable-css-colorization t
+        web-mode-enable-auto-pairing t
+        web-mode-enable-comment-keywords t
+        web-mode-enable-current-element-highlight t
+        )
+  (add-hook 'web-mode-hook
+            (lambda ()
+              (when (string-equal "tsx" (file-name-extension buffer-file-name))
+		(setup-tide-mode))))
+  ;; enable typescript-tslint checker
+  (flycheck-add-mode 'typescript-tslint 'web-mode))
+
+(straight-use-package 'typescript-mode)
+(use-package typescript-mode
+  :mode "\\.ts\\'"
+  :config
+  (setq typescript-indent-level 2)
+  (add-hook 'typescript-mode 'subword-mode))
+  
+(straight-use-package 'tide)
+
+(defun setup-tide-mode ()
+  (interactive)
+  (tide-setup)
+  (flycheck-mode +1)
+  (setq flycheck-check-syntax-automatically '(save mode-enabled))
+  (eldoc-mode +1)
+  (tide-hl-identifier-mode +1)
+  (company-mode +1))
+
+;; aligns annotation to the right hand side
+(setq company-tooltip-align-annotations t)
+
+;; if you use typescript-mode
+(add-hook 'typescript-mode-hook 'setup-tide-mode)
+(setq-default indent-tabs-mode nil)
