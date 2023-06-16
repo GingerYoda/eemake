@@ -1,4 +1,4 @@
-;;===========================================================
+q;;===========================================================
 ;; *** NÄYTÖN ASETUKSET***
 ;;-----------------------------------------------------------
 
@@ -91,7 +91,7 @@
 
 (global-set-key (kbd "C-c ö") "{")
 (global-set-key (kbd "C-c ä") "[")
-
+(global-set-key (kbd "C-x o") 'read-only-mode)
 (global-unset-key (kbd "C-z"))
 (global-unset-key (kbd "C-x C-c"))
 
@@ -237,12 +237,14 @@
 (straight-use-package 'lsp-mode)
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
-  :init (setq lsp-keymap-prefix "C-c l")
+  :init (setq lsp-keymap-prefix "C-c z")
   :custom
   ;; what to use when checking on-save. "check" is default, I prefer clippy
   (lsp-rust-analyzer-cargo-watch-command "clippy")
   (lsp-eldoc-render-all t)
   (lsp-idle-delay 5.0)
+  (lsp-eldoc-enable-hover t)
+  (lsp-signature-render-documentation t)
 
   ;; This controls the overlays that display type and other hints inline. Enable
   ;; / disable as you prefer. Well require a `lsp-workspace-restart' to have an
@@ -274,7 +276,8 @@
   :custom
   (lsp-ui-peek-always-show t)
   (lsp-ui-sideline-show-hover nil)
-  (lsp-ui-doc-enable t))
+  (lsp-ui-doc-enable t)
+  (lsp-ui-sideline-enable nil))
 
 ;; ***Tekstin täydennys company***
 (straight-use-package 'company)
