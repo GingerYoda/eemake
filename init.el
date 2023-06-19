@@ -1,4 +1,4 @@
-q;;===========================================================
+;;===========================================================
 ;; *** NÄYTÖN ASETUKSET***
 ;;-----------------------------------------------------------
 
@@ -9,8 +9,7 @@ q;;===========================================================
 (setq inhibit-splash-screen t)
 
 ;; Fontin asettaminen.
-(set-face-attribute 'default nil :font "Liberation Mono-15")
-
+(set-face-attribute 'default nil :font "Liberation Mono-16")
 
 ;; Asettaa sisennyksen.
 (setq-default tab-width 4)
